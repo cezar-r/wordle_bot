@@ -425,14 +425,3 @@ class Bot:
 			guess_results.append(inner_text.split()[2].split('"')[1])  # gets the result of each tile
 			time.sleep(1)
 		return guess_results
-
-
-
-def main():
-	bot = Bot()
-	bot.run()
-
-
-
-if __name__ == '__main__':
-	main()
