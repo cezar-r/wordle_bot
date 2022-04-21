@@ -111,3 +111,7 @@ slave
 shame
 cheek
 ample
+flair
+foyer
+cargo
+oxide
