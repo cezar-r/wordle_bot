@@ -1,9 +1,9 @@
 {
     "data": {
-        "games_played": 4,
-        "win_rate": 100,
-        "max_streak": 4,
-        "cur_streak": 4,
+        "games_played": 0,
+        "win_rate": 0,
+        "max_streak": 0,
+        "cur_streak": 0,
         "game_history": [
       
         ]
