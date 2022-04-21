@@ -1,4 +1,4 @@
-from bot import Bot
+from bot import WordleBot
 
 def main():
 	bot = WordleBot(first_guess = "soare", cur_wordle = 304)
