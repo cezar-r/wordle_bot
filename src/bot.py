@@ -18,7 +18,7 @@ driver.get(url)
 time.sleep(1)
 
 
-class Bot:
+class WordleBot:
 	"""
 	This class represents the bot that plays wordle
 	Its data is stored in a json file and its first guess is
