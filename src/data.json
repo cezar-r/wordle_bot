@@ -1,11 +1,47 @@
 {
-	"data" : {
-		"games_played" : 0,
-		"win_rate" : 0,
-		"max_streak" : 0,
-		"cur_streak" : 0,
-		"game_history" : []
-	}
-
-
+    "data": {
+        "games_played": 4,
+        "win_rate": 100,
+        "max_streak": 4,
+        "cur_streak": 4,
+        "game_history": [
+            {
+                "wordle_302": {
+                    "won": true,
+                    "1": "soare",
+                    "2": "crank",
+                    "3": "plait",
+                    "4": "flair"
+                }
+            },
+            {
+                "wordle_303": {
+                    "won": true,
+                    "1": "soare",
+                    "2": "corny",
+                    "3": "mower",
+                    "4": "lover",
+                    "5": "poker",
+                    "6": "foyer"
+                }
+            },
+            {
+                "wordle_304": {
+                    "won": true,
+                    "1": "soare",
+                    "2": "mayor",
+                    "3": "ratio",
+                    "4": "cargo"
+                }
+            },
+            {
+                "wordle_305": {
+                    "won": true,
+                    "1": "soare",
+                    "2": "ozone",
+                    "3": "oxide"
+                }
+            }
+        ]
+    }
 }

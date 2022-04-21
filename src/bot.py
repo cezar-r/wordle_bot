@@ -26,7 +26,7 @@ class Bot:
 	The current wordle should be set to whatever wordle the 
 	previous days wordle was
 	"""
-	def __init__(self, filename = "data.json", first_guess = "soare", cur_wordle = 302):
+	def __init__(self, filename = "data.json", first_guess = "soare", cur_wordle = 303):
 		self.filename = filename
 		self.first_guess = first_guess
 		self.cur_wordle = cur_wordle
@@ -39,14 +39,11 @@ class Bot:
 		to complete the puzzle. Otherwise, it continuously 
 		checks for a new wordle every 5 seconds
 		"""
-		dots = 1
+		i = 1
 		while not self._new_wordle():
-			dots_str = "." * dots
+			dots_str = "." * ((i % 3) + 1)
 			print("Waiting for new wordle" + dots_str, end = "\r")
-			if dots == 3:
-				dots = 1
-			else:
-				dots += 1
+			i += 1
 			time.sleep(5)
 
 		os.system('cls' if os.name == 'nt' else 'clear')
@@ -65,7 +62,7 @@ class Bot:
 		bool:	true if new wordle, otherwise false
 		"""
 		# returns true if new wordle is loaded, otherwise false	
-		driver.refresh() # delete if autorefreshes at midnight
+		driver.refresh() 
 		inner_texts = [my_elem.get_attribute("outerHTML") for my_elem in driver.execute_script("""return document.querySelector('game-app').shadowRoot.querySelector('game-row').shadowRoot.querySelectorAll('game-tile[letter]')""")]
 		if inner_texts == []:
 			self.cur_wordle += 1
@@ -89,10 +86,12 @@ class Bot:
 			guess_results = self._guess(guess)
 			prev_guesses.append(guess)
 			if self._guessed_word(guess_results):
+				PREV_ANSWERS.append(guess)
 				self._write_out(prev_guesses, True)
 				return
 			poss_words = self._find_poss_words(guess, guess_results, poss_words)
 			guess = self._new_guess(guess_results, guess, prev_guesses,  poss_words)
+			
 
 		self._write_out(prev_guesses, False)
 
@@ -260,20 +259,20 @@ class Bot:
 		if len(cur_combination) == 5 :
 			combinations.append(cur_combination.copy())
 			return combinations
-		guess = guess_results[0]
+		evaluation = guess_results[0]
 		# if the current letter matches the other words letter at the same location, it must have the same evaluation
 		if word[0] == guess_word[0]:
-			cur_combination.append(guess)
+			cur_combination.append(evaluation)
 			combinations = self._create_all_combinations(guess_results[1:], word[1:], guess_word[1:], combinations, cur_combination)
 			cur_combination.pop()
 		# if the evaluation of the current letter is green, and the current letter is not the same as the previous letter, it cannot be correct
-		elif guess == 'correct' and word[0] != guess_word[0]:
+		elif evaluation == 'correct' and word[0] != guess_word[0]:
 			for evaluation in ['present', 'absent']:
 				cur_combination.append(evaluation)
 				combinations = self._create_all_combinations(guess_results[1:], word[1:], guess_word[1:], combinations, cur_combination)
 				cur_combination.pop()
 		# if the evaluation of the current letter is present and the current words letter is in the previous guess, it must cannot be absent
-		elif guess == 'present' and word[0] in guess_word:
+		elif evaluation == 'present' and word[0] in guess_word:
 			for evaluation in ['present', 'correct']:
 				cur_combination.append(evaluation)
 				combinations = self._create_all_combinations(guess_results[1:], word[1:], guess_word[1:], combinations, cur_combination)
@@ -334,6 +333,7 @@ class Bot:
 		for word in poss_words:
 			if word != guess and self._word_matches_guess(word, guess, guess_results):
 				new_poss_words.append(word)
+
 		return new_poss_words
 
 	def _word_matches_guess(self, word, guess, guess_results):
@@ -364,9 +364,15 @@ class Bot:
 			elif evaluation == 'absent':
 				absent.append(letter)
 		for i, char in enumerate(word):
-			if char in absent:
+			if char in absent and char not in list(correct.values()) + present:
 				return False
 			if char != guess[i] and i in list(correct.keys()):
+				return False
+		for char in present:
+			if char not in word:
+				return False
+		for char in list(correct.values()):
+			if char not in word:
 				return False
 		return True
 
@@ -418,7 +424,8 @@ class Bot:
 		guess_results = []
 		sends = driver.find_element(By.XPATH, "/html/body")
 		sends.click()
-		sends.send_keys(guess)
+		for char in guess:
+			sends.send_keys(char)
 		sends.send_keys(Keys.ENTER)
 		inner_texts = [my_elem.get_attribute("outerHTML") for my_elem in driver.execute_script(query)]
 		for inner_text in inner_texts:
