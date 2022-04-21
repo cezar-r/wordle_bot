@@ -3,7 +3,7 @@
 https://user-images.githubusercontent.com/59450965/164546807-89b46729-2057-44b3-b859-3c9e5f329f0b.mp4
 
 ## Motive
-This program was mainly inspired by the [video posted by 3Blue1Brown](https://www.youtube.com/watch?v=v68zYyaEmEA&t=642s), in which he explains how wordle can be solved using information theory. This program incorporates the math from the video and sends requests to the [Wordle website](https://www.nytimes.com/games/wordle/index.html) to solve the daily puzzle.
+This program was mainly inspired by the [video posted by 3Blue1Brown](https://www.youtube.com/watch?v=v68zYyaEmEA), in which he explains how wordle can be solved using information theory. This program incorporates the math from the video and sends requests to the [Wordle website](https://www.nytimes.com/games/wordle/index.html) to solve the daily puzzle.
 
 ## Installing and Running
 
