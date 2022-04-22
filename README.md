@@ -8,7 +8,8 @@ This program was mainly inspired by the [video posted by 3Blue1Brown](https://ww
 ## Installing and Running
 
 ### Chromedriver
-- Be sure to install the latest version of [chromedriver](https://chromedriver.chromium.org/downloads) to your `C:\Program Files (x86)` folder. This is used to launch the browser and communicate with the Wordle website.
+- Be sure to install your Chrome's current version of [chromedriver](https://chromedriver.chromium.org/downloads) to your `C:\Program Files (x86)` folder. This is used to launch the browser and communicate with the Wordle website.
+- You can find your Chrome version by typing `chrome://settings/help` into your search bar.
 
 ### Installation
 - ```git clone https://github.com/cezar-r/wordle_bot```
