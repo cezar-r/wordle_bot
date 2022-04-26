@@ -115,3 +115,8 @@ flair
 foyer
 cargo
 oxide
+plant
+olive
+inert
+askew
+heist

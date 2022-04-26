@@ -3,7 +3,7 @@ def read_file(filename):
 	content = []
 	for word in file.readlines():
 		content.append(word.strip())
-	return content
+	return set(content)
 
 
 WORDBANK = read_file("wordbank.txt")
