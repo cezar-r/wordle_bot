@@ -20,5 +20,5 @@ This program was mainly inspired by the [video posted by 3Blue1Brown](https://ww
 - `python main.py`
 
 ### Running Simulations
-- `python simulate.py <n_simulations> <first_guess1> <first_guess2> ... <first_guessn>
+- `python simulate.py <n_simulations> <first_guess1> <first_guess2> ... <first_guessn>`
 - Ex: `python simulate 100 slate crate crane`
