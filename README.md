@@ -15,4 +15,10 @@ This program was mainly inspired by the [video posted by 3Blue1Brown](https://ww
 - ```git clone https://github.com/cezar-r/wordle_bot```
 - `cd wordle_bot/src`
 - `pip install -r requirements.txt`
+
+### Running Browser Bot
 - `python main.py`
+
+### Running Simulations
+- `python simulate.py <n_simulations> <first_guess1> <first_guess2> ... <first_guessn>`
+- Ex: `python simulate.py 100 slate crate crane`
