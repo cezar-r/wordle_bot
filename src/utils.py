@@ -1,4 +1,4 @@
-from words import PREV_ANSWERS
+from words import PREV_ANSWERS, WORDBANK
 import numpy as np
 
 
@@ -34,7 +34,7 @@ def new_guess(guess_results, guess, prev_guesses, poss_words, prev_answers = PRE
 				combinations = create_all_combinations(guess_results, word, guess, [], []) 
 				entropy_dict = find_next_poss_words(combinations, word, poss_words) #
 				entropy = get_entropy(entropy_dict, poss_words) #
-				word_entropy_dict[word] = entropy
+				word_entropy_dict[word] = entropy	
 		sorted_entropy = list(sorted(word_entropy_dict.items(), key = lambda x: x[1]))[::-1]
 		return sorted_entropy[0][0]
 
@@ -105,35 +105,35 @@ def find_poss_words(guess, guess_results, poss_words, prev_answers = PREV_ANSWER
 	for word in poss_words:
 		if word != guess and word_matches_guess(word, guess, guess_results) and word not in prev_answers:
 			new_poss_words.append(word)
-	return new_poss_words
+	return sorted(new_poss_words)
 
 
 def find_next_poss_words(combinations, guess, poss_words):
-		"""
-		This method looks through every combination and finds every word that fits that
-		combination. It then stores it into a dictionary of {combination: [list of words]}
+	"""
+	This method looks through every combination and finds every word that fits that
+	combination. It then stores it into a dictionary of {combination: [list of words]}
 
-		Parameters
-		----------
-		combinations:	list
-						list of all combinations
-		guess: 			str
-						previous guess
-		poss_words:		list
-						list of all possible words
+	Parameters
+	----------
+	combinations:	list
+					list of all combinations
+	guess: 			str
+					previous guess
+	poss_words:		list
+					list of all possible words
 
-		Returns
-		-------
-		new_poss_words: list
-						list of new possible words
-		"""
-		new_poss_words = {}
-		for combination in combinations:
-			comb_str = "".join(combination)
-			words_for_comb = find_poss_words(guess, combination, poss_words)
-			if words_for_comb:
-				new_poss_words[comb_str] = words_for_comb
-		return new_poss_words
+	Returns
+	-------
+	new_poss_words: list
+					list of new possible words
+	"""
+	new_poss_words = {}
+	for combination in combinations:
+		comb_str = "".join(combination)
+		words_for_comb = find_poss_words(guess, combination, poss_words)
+		if words_for_comb:
+			new_poss_words[comb_str] = words_for_comb
+	return new_poss_words
 
 
 def word_matches_guess(word, guess, guess_results):
@@ -153,30 +153,51 @@ def word_matches_guess(word, guess, guess_results):
 	-------
 	bool:			true if matches, otherwise false
 	"""
+	def word_has_n_present_p(word, char, count, correct):
+		found = 0 
+		for i, _char in enumerate(word):
+			if _char == char:
+				if i in correct and correct[i] != _char:
+					found += 1
+				elif i not in correct:
+					found += 1
+		return found >= count
+
 	correct = {}
-	present = []
+	present = {}
 	absent = []
 	for i, (letter, evaluation) in enumerate(zip(guess, guess_results)):
 		if evaluation == 'correct':
 			correct[i] = letter
 		elif evaluation == 'present':
-			present.append(letter)
+			if letter in present:
+				present[letter] += 1
+			else:
+				present[letter] = 1
 		elif evaluation == 'absent':
 			absent.append(letter)
-	for i, char in enumerate(word):
-		if char in absent and char not in list(correct.values()) + present:
+
+	for i, (char1, char2) in enumerate(list(zip(word, guess))):
+		if char2 in present and char1 == char2 and i not in correct:
+			return False 
+
+	for i, (char1, char2) in enumerate(list(zip(word, guess))):
+		if char1 == char2 and char1 in absent and i not in correct:
+			return False	
+
+	for idx in correct:
+		if guess[idx] != word[idx]:
 			return False
-		if char != guess[i] and i in list(correct.keys()):
+
+	for char, count in list(present.items()):
+		if not word_has_n_present_p(word, char, count, correct):
 			return False
-		if char == guess[i] and i not in correct:
-			return False
-	for char in present:
-		if char not in word:
-			return False
-	for char in list(correct.values()):
-		if char not in word:
+
+	for char in absent:
+		if char in word and char not in list(correct.values()) + list(present.keys()):
 			return False
 	return True
+
 
 
 def get_entropy(entropy_dict, poss_words):

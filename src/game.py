@@ -27,24 +27,40 @@ class Game:
 		evaluation:	list
 					list of all evaluations
 		"""
+
+		def remove_correct(evaluation, word):
+			new_word = ""
+			for i, char in enumerate(word):
+				if i in evaluation and evaluation[i] != "correct":
+					new_word += char
+				elif i not in evaluation:
+					new_word += char
+			return new_word 
+
 		freq_dict = {}
+		idx_dict = {}
 		for i, keys in enumerate(self.answer):
 			freq_dict[keys] = freq_dict.get(keys, 0) + 1
+			idx_dict[i] = keys
 
-		evaluation = []
+		evaluation = {}
 		for i, (cur_letter, corr_letter) in enumerate(list(zip(guess, self.answer))):
 			if cur_letter == corr_letter:
-				evaluation.append('correct')
-				freq_dict[cur_letter] -= 1
+				evaluation[i] = "correct"
 			elif cur_letter not in self.answer:
-				evaluation.append('absent')
-			elif cur_letter in self.answer:
-				if freq_dict[cur_letter] == 0 or cur_letter == self.answer[i]:
-					evaluation.append('absent')
-				else:
-					evaluation.append('present')
+				evaluation[i] = "absent"
+
+		for i, (cur_letter, corr_letter) in enumerate(list(zip(guess, self.answer))):
+			if i not in evaluation:
+				if cur_letter in remove_correct(evaluation, self.answer) and freq_dict[cur_letter] > 0:
+					evaluation[i] = "present"
 					freq_dict[cur_letter] -= 1
-		return evaluation
+				else:
+					evaluation[i] = "absent"
+
+		sorted_eval = dict(sorted(list(evaluation.items()), key = lambda x: x[0]))
+		return list(sorted_eval.values())
+
 
 	def get_answer(self):
 		"""This method returns the correct answer"""

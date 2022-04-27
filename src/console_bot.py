@@ -9,8 +9,9 @@ class ConsoleWordleBot:
 	command line. It is initialized with the first
 	guess.
 	"""
-	def __init__(self, first_guess):
+	def __init__(self, first_guess, verbose = False):
 		self.data = []
+		self.verbose = verbose
 		self.first_guess = first_guess
 
 	def play_game(self, game = None):
@@ -34,17 +35,28 @@ class ConsoleWordleBot:
 		poss_words = WORDBANK
 		guesses = 0
 		prev_guesses = []
+		won = False
 		while guesses < 6:
 			guesses += 1
 			guess_results = game.check_guess(guess)
 			prev_guesses.append(guess)
+			# print(guess)
+			# print(guess_results)
+			# print(sorted(poss_words))
 			if guessed_word(guess_results):
-				self._update_data(prev_guesses, True, game)
-				return True
+				won = True
+				break
+				
 			poss_words = find_poss_words(guess, guess_results, poss_words, [])
-			guess = new_guess(guess_results, guess, prev_guesses, poss_words, [])
-		self._update_data(prev_guesses, True, game)
-		return False
+			try:
+				guess = new_guess(guess_results, guess, prev_guesses, poss_words, [])
+			except:
+				print(game.get_answer())
+				exit()
+		self._update_data(prev_guesses, won, game)
+		if self.verbose:
+			self.display_game(idx = -1)
+		return won
 
 	def get_data(self):
 		"""This method returns the bots data"""
@@ -83,7 +95,7 @@ class ConsoleWordleBot:
 						correct answer for the game
 		"""
 		if idx:
-			for key, val in list(self.data[idx-1].items()):
+			for key, val in list(self.data[idx].items()):
 				print(f"{key}: {val}")
 		elif correct_answer:
 			for i, game in enumerate(self.data):
@@ -110,3 +122,8 @@ class ConsoleWordleBot:
 		game_data['num_guesses'] = len(prev_guesses)
 		game_data['answer'] = game.get_answer()
 		self.data.append(game_data)
+
+
+if __name__ == '__main__':
+	bot = ConsoleWordleBot("slate", verbose = True)
+	bot.play_game()
