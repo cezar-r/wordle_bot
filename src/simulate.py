@@ -1,9 +1,12 @@
 import sys
 import os
+import random
 
 from console_bot import ConsoleWordleBot
 from game import Game
+from words import POSS_ANSWERS
 
+poss_answers = list(POSS_ANSWERS).copy()
 
 def simulate(n_simulations = int(sys.argv[1]), first_words = sys.argv[2:]):
 	"""
@@ -17,14 +20,24 @@ def simulate(n_simulations = int(sys.argv[1]), first_words = sys.argv[2:]):
 	firt_words:			list
 						list of first guesses to use
 	"""
+
+	def print_progress_bar(iteration, prefix = "Progress", suffix = 'Complete', decimals = 1, length = 80, fill ='█', end = "\r"):
+		percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(n_simulations)))
+		filled_length = int(length * iteration // n_simulations)
+		bar = fill * filled_length + '-' * (length - filled_length)
+		print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = end)
+
+
 	os.system('cls' if os.name == 'nt' else 'clear')
 	print(f"Simulating {n_simulations} games of wordle trying '{', '.join(first_words[:-1])}, {first_words[-1]}' as first guesses\n\n")
 	bots = []
 	for word in first_words:
 		bots.append(ConsoleWordleBot(word))
 	for i in range(n_simulations):
-		print(f"Playing game {i+1}/{n_simulations}", end = "\r")
-		game = Game()
+		print_progress_bar(i)
+		answer = random.choice(poss_answers)
+		poss_answers.pop(poss_answers.index(answer))
+		game = Game(answer)
 		for bot in bots:
 			bot.play_game(game)
 	os.system('cls' if os.name == 'nt' else 'clear')

@@ -9,9 +9,11 @@ class Game:
 	a random answer when initialized and has a method
 	that evaluates each guess.
 	"""
-	def __init__(self):
-		self.answer = random.choice(list(WORDBANK))
-
+	def __init__(self, answer = None):
+		if not answer:
+			self.answer = random.choice(list(WORDBANK))
+		else:
+			self.answer = answer
 	def check_guess(self, guess):
 		"""
 		This method evaluates a guess relative to the correct 

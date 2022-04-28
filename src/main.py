@@ -1,7 +1,7 @@
 from bot import WordleBot
 
 def main():
-	bot = WordleBot(first_guess = "slate", cur_wordle = 311)
+	bot = WordleBot(first_guess = "slate", cur_wordle = 312)
 	bot.run()
 
 

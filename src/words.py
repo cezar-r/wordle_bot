@@ -8,3 +8,4 @@ def read_file(filename):
 
 WORDBANK = read_file("wordbank.txt")
 PREV_ANSWERS = read_file("prev_answers.txt")
+POSS_ANSWERS = read_file("poss_answers.txt")
