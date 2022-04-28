@@ -14,6 +14,4 @@ if __name__ == '__main__':
 Continue running simulations and comparing guesses to wordle bot
 Find a way to look through every word in vocab as guess
 Add word commonality
-
-
 '''
