@@ -93,7 +93,7 @@ class WordleBot:
                 self._write_out(prev_guesses, prev_guess_results, True)
                 return
             poss_words = find_poss_words(guess, guess_results, poss_words, PREV_ANSWERS)
-            guess = new_guess(guess_results, guess, prev_guesses, poss_words, PREV_ANSWERS)
+            guess = new_guess(poss_words, poss_words, prev_guesses, PREV_ANSWERS)
             
 
         self._write_out(prev_guesses, prev_guess_results, False)

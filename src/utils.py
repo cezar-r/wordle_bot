@@ -2,41 +2,99 @@ from words import PREV_ANSWERS, WORDBANK
 import numpy as np
 
 
-def new_guess(guess_results, guess, prev_guesses, poss_words, prev_answers = PREV_ANSWERS):
-        """
-        This method is the brains behind finding what the next guess should be
-        It looks through every possible word, and creates all possible outcomes of 
-        that guess 
-        i.e., (absent, present, correct, correct, present), (absent present, correct, correct, absent), etc
-        It then calculates the entropy for each word, which can be thought of as the amount of
-        information gained by picking said word. The word with the highest entropy is returned
-        Watch https://www.youtube.com/watch?v=v68zYyaEmEA for more info
+def new_guess(corpus, poss_words, prev_guesses, prev_answers = PREV_ANSWERS):
+    """
+    This method is the brains behind finding what the next guess should be
+    It looks through every possible word, and creates all possible outcomes of 
+    that guess 
+    i.e., (absent, present, correct, correct, present), (absent present, correct, correct, absent), etc
+    It then calculates the entropy for each word, which can be thought of as the amount of
+    information gained by picking said word. The word with the highest entropy is returned
+    Watch https://www.youtube.com/watch?v=v68zYyaEmEA for more info
 
-        Parameters
-        ----------
-        guess_results:          list
-                                list of evaluation results from previous guess
-        guess:                  str
-                                previous guess
-        prev_guesses:           list
-                                list of previous guesses
-        poss_word:              list
-                                list of possible words
-        
-        Returns
-        -------
-        sorted_entropy[0][0]:   str
-                                word with highest entropy
-        """
-        word_entropy_dict = {}
-        for word in poss_words:
-            if word not in prev_guesses or word not in prev_answers:
-                combinations = create_all_combinations(guess_results, word, guess, [], []) 
-                entropy_dict = find_next_poss_words(combinations, word, poss_words) #
-                entropy = get_entropy(entropy_dict, poss_words) #
-                word_entropy_dict[word] = entropy   
-        sorted_entropy = list(sorted(word_entropy_dict.items(), key = lambda x: x[1]))[::-1]
-        return sorted_entropy[0][0]
+    Parameters
+    ----------
+    corpus:                 list
+                            list of words to look over
+    poss_words:             list
+                            list of possible words
+    prev_guesses:           list
+                            list of previous guesses
+    prev_answers:           list 
+                            list of previous answers
+
+    Returns
+    -------
+    sorted_entropy[0][0]:   str
+                            word with highest entropy
+    """
+    word_entropy = {}
+    for word in corpus:
+        if word not in prev_guesses and word not in prev_answers:
+            poss_answers = {}
+            for poss_answer in poss_words:
+                result = check_guess(word, poss_answer)
+                result_str = "".join(result)
+                if result_str in poss_answers:
+                    poss_answers[result_str].append(word)
+                else:
+                    poss_answers[result_str] = [word]
+            entropy = get_entropy(poss_answers, poss_words)
+            word_entropy[word] = entropy 
+    sorted_entropy = sorted(list(word_entropy.items()), key = lambda x: x[1])[::-1]
+    return sorted_entropy[0][0]
+
+
+def check_guess(guess, answer):
+    """
+    This method evaluates a guess relative to the correct 
+    answer similar to how the Wordle game does it
+
+    Parameters
+    ----------
+    guess:      str
+                guessed word
+
+    Returns
+    -------
+    evaluation: list
+                list of all evaluations
+    """
+    def remove_correct(evaluation, word):
+        """This method removes all the correct letters from the answer"""
+        new_word = ""
+        for i, char in enumerate(word):
+            if i in evaluation and evaluation[i] != "correct":
+                new_word += char
+            elif i not in evaluation:
+                new_word += char
+        return new_word 
+
+    freq_dict = {}
+    idx_dict = {}
+    for i, keys in enumerate(answer):
+        freq_dict[keys] = freq_dict.get(keys, 0) + 1
+        idx_dict[i] = keys
+
+    evaluation = {}
+    for i, (cur_letter, corr_letter) in enumerate(list(zip(guess, answer))):
+        if cur_letter == corr_letter:
+            evaluation[i] = "correct"
+            freq_dict[cur_letter] -= 1
+        elif cur_letter not in answer:
+            evaluation[i] = "absent"
+
+    for i, (cur_letter, corr_letter) in enumerate(list(zip(guess, answer))):
+        if i not in evaluation:
+            if cur_letter in remove_correct(evaluation, answer) and freq_dict[cur_letter] > 0:
+                evaluation[i] = "present"
+                freq_dict[cur_letter] -= 1
+            else:
+                evaluation[i] = "absent"
+
+    sorted_eval = dict(sorted(list(evaluation.items()), key = lambda x: x[0]))
+    return list(sorted_eval.values())
+
 
 
 def create_all_combinations(guess_results, word, guess_word, combinations, cur_combination):

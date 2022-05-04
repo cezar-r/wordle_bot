@@ -43,17 +43,18 @@ class ConsoleWordleBot:
             guesses += 1
             guess_results = game.check_guess(guess)
             prev_guesses.append(guess)
+            prev_guess_results.append(guess_results)
             if guessed_word(guess_results):
                 won = True
                 break
             poss_words = find_poss_words(guess, guess_results, poss_words, [])
-            guess = new_guess(guess_results, guess, prev_guesses, poss_words, [])
+            guess = new_guess(poss_words, poss_words, prev_guesses, [])
 
         elapsed = (datetime.now() - start).total_seconds()
         self._update_data(prev_guesses, prev_guess_results, won, game, elapsed)
         if self.verbose:
             self.display_game(idx = -1)
-        return won
+        return game
 
     def get_data(self):
         """This method returns the bots data"""
@@ -91,10 +92,10 @@ class ConsoleWordleBot:
                 print(f"{i}  {'|' * round((dict(win_rate_data)[i] / most_bars) * 10 + 1)} {dict(win_rate_data)[i]}")
         
         if lost_on:
-            print("Lost on words:")
+            print("\nLost on words:")
             for elem in lost_on:
                 print(elem)
-        print()
+        print('\n')
 
     def display_game(self, idx = None, correct_answer = None):
         """
@@ -129,11 +130,14 @@ class ConsoleWordleBot:
         game:               Game()
                             game object of game     
         """
+        color_dict = {'present' : "🟨",
+                'correct' : "🟩",
+                'absent' : "🏴󠁵󠁳󠁴󠁸󠁿"}
         game_data = {}
         game_data['won'] = won 
-        for i, (guess, _eval) in enumerate(zip(prev_guesses, prev_guess_results)):
+        for i, (guess, evaluation) in enumerate(zip(prev_guesses, prev_guess_results)):
             game_data[f"guess_{i+1}"] = guess
-            game_data[f"eval_{i+1}"] = _eval
+            game_data[f"eval_{i+1}"] = "".join([color_dict[_eval] for _eval in evaluation])
         game_data['num_guesses'] = len(prev_guesses)
         game_data['answer'] = game.get_answer()
         game_data['time_to_solve'] = round(elapsed, 2)
@@ -142,4 +146,6 @@ class ConsoleWordleBot:
 
 if __name__ == '__main__':
     bot = ConsoleWordleBot("slate", verbose = True)
-    bot.play_game()
+    game = bot.play_game(Game("inert"))
+    # print(game.guess_results_as_string())
+    # print(game.get_answer())

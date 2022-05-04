@@ -1,6 +1,7 @@
 import random
 
-from words import WORDBANK
+from words import POSS_ANSWERS
+from utils import check_guess
 
 
 class Game:
@@ -9,11 +10,15 @@ class Game:
     a random answer when initialized and has a method
     that evaluates each guess.
     """
-    def __init__(self, answer = None):
+    def __init__(self, answer = None, verbose = False):
         if not answer:
-            self.answer = random.choice(list(WORDBANK))
+            self.answer = random.choice(list(POSS_ANSWERS ))
         else:
             self.answer = answer
+        self.guess_results = []
+        self.verbose = verbose
+
+
     def check_guess(self, guess):
         """
         This method evaluates a guess relative to the correct 
@@ -26,42 +31,28 @@ class Game:
 
         Returns
         -------
-        evaluation: list
+        results:    list
                     list of all evaluations
         """
+        color_dict = {'present' : "🟨",
+                'correct' : "🟩",
+                'absent' : "🏴󠁵󠁳󠁴󠁸󠁿"} 
 
-        def remove_correct(evaluation, word):
-            new_word = ""
-            for i, char in enumerate(word):
-                if i in evaluation and evaluation[i] != "correct":
-                    new_word += char
-                elif i not in evaluation:
-                    new_word += char
-            return new_word 
+        results = check_guess(guess, self.answer)
+        result_str = "".join([color_dict[evaluation] for evaluation in results])
+        self.guess_results.append(result_str)
+        if self.verbose:
+            print(f'{guess}\n{result_str}')
+        return results
 
-        freq_dict = {}
-        idx_dict = {}
-        for i, keys in enumerate(self.answer):
-            freq_dict[keys] = freq_dict.get(keys, 0) + 1
-            idx_dict[i] = keys
 
-        evaluation = {}
-        for i, (cur_letter, corr_letter) in enumerate(list(zip(guess, self.answer))):
-            if cur_letter == corr_letter:
-                evaluation[i] = "correct"
-            elif cur_letter not in self.answer:
-                evaluation[i] = "absent"
-
-        for i, (cur_letter, corr_letter) in enumerate(list(zip(guess, self.answer))):
-            if i not in evaluation:
-                if cur_letter in remove_correct(evaluation, self.answer) and freq_dict[cur_letter] > 0:
-                    evaluation[i] = "present"
-                    freq_dict[cur_letter] -= 1
-                else:
-                    evaluation[i] = "absent"
-
-        sorted_eval = dict(sorted(list(evaluation.items()), key = lambda x: x[0]))
-        return list(sorted_eval.values())
+    def guess_results_as_string(self):
+        """This method returns the entire results into a str
+        Similar to what is seen when copying your wordle results"""
+        string = ""
+        for result in self.guess_results:
+            string  += result + "\n"
+        return string
 
 
     def get_answer(self):

@@ -8,7 +8,7 @@ from words import POSS_ANSWERS
 
 poss_answers = list(POSS_ANSWERS).copy()
 
-def simulate(n_simulations = int(sys.argv[1]), first_words = sys.argv[2:]):
+def simulate(n_simulations, first_words):
     """
     This method simulates <n_simulation> games using <first_words> as
     the first guess(es). It then displays the result of using each first word
@@ -20,8 +20,8 @@ def simulate(n_simulations = int(sys.argv[1]), first_words = sys.argv[2:]):
     firt_words:         list
                         list of first guesses to use
     """
-
     def print_progress_bar(iteration, prefix = "Progress", suffix = 'Complete', decimals = 1, length = 80, fill ='█', end = "\r"):
+        """This method prints a progress bar to the screen"""
         percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(n_simulations)))
         filled_length = int(length * iteration // n_simulations)
         bar = fill * filled_length + '-' * (length - filled_length)
@@ -39,7 +39,12 @@ def simulate(n_simulations = int(sys.argv[1]), first_words = sys.argv[2:]):
         poss_answers.pop(poss_answers.index(answer))
         game = Game(answer)
         for bot in bots:
-            bot.play_game(game)
+            try:
+                bot.play_game(game)
+            except Exception as e:
+                print(f'\rERROR ON WORD {answer}')
+                print(f'{e}')
+                exit()
     os.system('cls' if os.name == 'nt' else 'clear')
     for bot in bots:
         bot.display_data()
@@ -51,7 +56,7 @@ def main():
         first_words = input("Enter first words to try separated by whitespace:\n").split()
         simulate(n_simulations, first_words)
     else:
-        simulate()
+        simulate(int(sys.argv[1]), sys.argv[2:])
 
 
 if __name__ == '__main__':
