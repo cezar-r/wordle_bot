@@ -22,3 +22,7 @@ This program was mainly inspired by the [video posted by 3Blue1Brown](https://ww
 ### Running Simulations
 - `python simulate.py <n_simulations> <first_guess1> <first_guess2> ... <first_guessn>`
 - Ex: `python simulate.py 100 slate crate crane`
+
+### Performance
+- Below is a screenshot of the Wordle bot after playing 2000 games using `slate` `dealt` `crane` and `soare` as its first guesses. The bot itself has no knowledge of possible answers, its corpus is the 12,000 word file of allowed guesses. It also has no knowledge of word commonality at the moment. Lastly, the bot plays Wordle on hard mode.
+<img src = "https://github.com/cezar-r/wordle_bot/blob/main/src/simulation_results.png">
