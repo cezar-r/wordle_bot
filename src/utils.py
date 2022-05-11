@@ -1,6 +1,9 @@
 from words import PREV_ANSWERS, WORDBANK
 import numpy as np
 
+color_dict = {'present' : "🟨",
+                'correct' : "🟩",
+                'absent' : "🏴󠁵󠁳󠁴󠁸󠁿"}
 
 def new_guess(corpus, poss_words, prev_guesses, prev_answers = PREV_ANSWERS):
     """
@@ -96,52 +99,6 @@ def check_guess(guess, answer):
     return list(sorted_eval.values())
 
 
-
-def create_all_combinations(guess_results, word, guess_word, combinations, cur_combination):
-        """
-        This method is a recursive search-based algorithm that creates every possible combination
-        of evaluations (with same caveats)
-
-        Parameters
-        ----------
-        guess_results:          list
-                                list of evaluation results from previous guess
-        word:                   str
-                                potential new word to guess with
-        guess_word:             str
-                                previous guess
-        combinations:           
-        """
-        if len(cur_combination) == 5 :
-            combinations.append(cur_combination.copy())
-            return combinations
-        evaluation = guess_results[0]
-        # if the current letter matches the other words letter at the same location, it must have the same evaluation
-        if word[0] == guess_word[0]:
-            cur_combination.append(evaluation)
-            combinations = create_all_combinations(guess_results[1:], word[1:], guess_word[1:], combinations, cur_combination)
-            cur_combination.pop()
-        # if the evaluation of the current letter is green, and the current letter is not the same as the previous letter, it cannot be correct
-        elif evaluation == 'correct' and word[0] != guess_word[0]:
-            for evaluation in ['present', 'absent']:
-                cur_combination.append(evaluation)
-                combinations = create_all_combinations(guess_results[1:], word[1:], guess_word[1:], combinations, cur_combination)
-                cur_combination.pop()
-        # if the evaluation of the current letter is present and the current words letter is in the previous guess, it must cannot be absent
-        elif evaluation == 'present' and word[0] in guess_word:
-            for evaluation in ['present', 'correct']:
-                cur_combination.append(evaluation)
-                combinations = create_all_combinations(guess_results[1:], word[1:], guess_word[1:], combinations, cur_combination)
-                cur_combination.pop()
-        # otherwise search all possibilites
-        else:
-            for evaluation in ['correct', 'present', 'absent']:
-                cur_combination.append(evaluation)
-                combinations = create_all_combinations(guess_results[1:], word[1:], guess_word[1:], combinations, cur_combination)
-                cur_combination.pop()
-        return combinations
-
-
 def find_poss_words(guess, guess_results, poss_words, prev_answers = PREV_ANSWERS):
     """
     This method creates a new list of possible words to pick from
@@ -164,34 +121,6 @@ def find_poss_words(guess, guess_results, poss_words, prev_answers = PREV_ANSWER
         if word != guess and word_matches_guess(word, guess, guess_results) and word not in prev_answers:
             new_poss_words.append(word)
     return sorted(new_poss_words)
-
-
-def find_next_poss_words(combinations, guess, poss_words):
-    """
-    This method looks through every combination and finds every word that fits that
-    combination. It then stores it into a dictionary of {combination: [list of words]}
-
-    Parameters
-    ----------
-    combinations:   list
-                    list of all combinations
-    guess:          str
-                    previous guess
-    poss_words:     list
-                    list of all possible words
-
-    Returns
-    -------
-    new_poss_words: list
-                    list of new possible words
-    """
-    new_poss_words = {}
-    for combination in combinations:
-        comb_str = "".join(combination)
-        words_for_comb = find_poss_words(guess, combination, poss_words)
-        if words_for_comb:
-            new_poss_words[comb_str] = words_for_comb
-    return new_poss_words
 
 
 def word_matches_guess(word, guess, guess_results):

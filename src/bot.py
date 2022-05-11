@@ -8,7 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
 from words import WORDBANK, PREV_ANSWERS
-from utils import find_poss_words, new_guess, guessed_word
+from utils import find_poss_words, new_guess, guessed_word, color_dict
 
 warnings.filterwarnings("ignore")
 options = webdriver.ChromeOptions()
@@ -27,7 +27,7 @@ class WordleBot:
     The current wordle should be set to whatever wordle the 
     previous days wordle was
     """
-    def __init__(self, filename = "data.json", first_guess = "slate", cur_wordle = 307):
+    def __init__(self, filename = "data.json", first_guess = "slate", cur_wordle = 0):
         self.filename = filename
         self.first_guess = first_guess
         self.cur_wordle = cur_wordle
@@ -99,6 +99,7 @@ class WordleBot:
         self._write_out(prev_guesses, prev_guess_results, False)
 
     def _update_prev_answers_file(self, guess):
+        """This method updates the file containing the previous answers"""
         prev_answers = open("prev_answers.txt", "a")
         prev_answers.write(f"{guess}\n")
         prev_answers.close()
@@ -114,10 +115,6 @@ class WordleBot:
         won:            bool
                         true if game was won
         """
-        color_dict = {'present' : "🟨",
-                'correct' : "🟩",
-                'absent' : "🏴󠁵󠁳󠁴󠁸󠁿"}
-
         key = "wordle_" + str(self.cur_wordle)
         data = self.data['data']
         game_data = {}

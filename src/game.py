@@ -1,7 +1,7 @@
 import random
 
 from words import POSS_ANSWERS
-from utils import check_guess
+from utils import check_guess, color_dict
 
 
 class Game:
@@ -33,11 +33,7 @@ class Game:
         -------
         results:    list
                     list of all evaluations
-        """
-        color_dict = {'present' : "🟨",
-                'correct' : "🟩",
-                'absent' : "🏴󠁵󠁳󠁴󠁸󠁿"} 
-
+        """ 
         results = check_guess(guess, self.answer)
         result_str = "".join([color_dict[evaluation] for evaluation in results])
         self.guess_results.append(result_str)

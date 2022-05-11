@@ -1,5 +1,5 @@
 from game import Game
-from utils import find_poss_words, new_guess, guessed_word
+from utils import find_poss_words, new_guess, guessed_word, color_dict
 from words import WORDBANK
 from datetime import datetime
 
@@ -81,7 +81,7 @@ class ConsoleWordleBot:
                 losses += 1
                 lost_on.append(game['answer'])
             total_elapsed += game['time_to_solve']
-        print(f'Bot data using "{self.first_guess.upper()}" as first word after {len(self.data)} games:\n\nWin rate: {wins/(wins+losses) * 100}%\nAvg Guesses: {num_guesses/wins}\nAvg Time Spent: {round(total_elapsed / wins+losses, 2)} seconds\n')
+        print(f'Bot data using "{self.first_guess.upper()}" as first word after {len(self.data)} games:\n\nWin rate: {wins/(wins+losses) * 100}%\nAvg Guesses: {num_guesses/wins}\nAvg Time Spent: {round(total_elapsed / (wins+losses), 2)} seconds\n')
         
         win_rate_data = list(sorted(list(distribution.items()), key = lambda x: x[1]))[::-1]
         most_bars = win_rate_data[0][1]
@@ -130,9 +130,6 @@ class ConsoleWordleBot:
         game:               Game()
                             game object of game     
         """
-        color_dict = {'present' : "🟨",
-                'correct' : "🟩",
-                'absent' : "🏴󠁵󠁳󠁴󠁸󠁿"}
         game_data = {}
         game_data['won'] = won 
         for i, (guess, evaluation) in enumerate(zip(prev_guesses, prev_guess_results)):
@@ -146,6 +143,6 @@ class ConsoleWordleBot:
 
 if __name__ == '__main__':
     bot = ConsoleWordleBot("slate", verbose = True)
-    game = bot.play_game(Game("inert"))
+    game = bot.play_game(Game("homer"))
     # print(game.guess_results_as_string())
     # print(game.get_answer())

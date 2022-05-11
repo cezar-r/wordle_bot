@@ -29,7 +29,7 @@ def simulate(n_simulations, first_words):
 
 
     os.system('cls' if os.name == 'nt' else 'clear')
-    print(f"Simulating {n_simulations} games of wordle trying '{', '.join(first_words[:-1])}, {first_words[-1]}' as first guesses\n\n")
+    print(f"Simulating {n_simulations} games of wordle trying '{first_words[0]}, {', '.join(first_words[1:])}' as first guesses\n\n")
     bots = []
     for word in first_words:
         bots.append(ConsoleWordleBot(word))
@@ -51,7 +51,7 @@ def simulate(n_simulations, first_words):
 
 
 def main():
-    if not sys.argv:
+    if len(sys.argv) == 1:
         n_simulations = int(input("Enter number of simulations:\n"))
         first_words = input("Enter first words to try separated by whitespace:\n").split()
         simulate(n_simulations, first_words)
