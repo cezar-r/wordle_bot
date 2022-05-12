@@ -134,3 +134,4 @@ canny
 shine
 gecko
 farce
+slung

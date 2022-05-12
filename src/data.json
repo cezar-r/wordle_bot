@@ -1,9 +1,9 @@
 {
     "data": {
-        "games_played": 19,
+        "games_played": 20,
         "win_rate": 100,
-        "max_streak": 19,
-        "cur_streak": 19,
+        "max_streak": 20,
+        "cur_streak": 20,
         "game_history": {
             "wordle_308": {
                 "won": true,
@@ -186,6 +186,15 @@
                 "guess_2": "range",
                 "eval_2": "🟨🟩🏴󠁵󠁳󠁴󠁸󠁿🏴󠁵󠁳󠁴󠁸󠁿🟩",
                 "guess_3": "farce",
+                "eval_3": "🟩🟩🟩🟩🟩"
+            },
+            "wordle_327": {
+                "won": true,
+                "guess_1": "slate",
+                "eval_1": "🟩🟩🏴󠁵󠁳󠁴󠁸󠁿🏴󠁵󠁳󠁴󠁸󠁿🏴󠁵󠁳󠁴󠁸󠁿",
+                "guess_2": "slunk",
+                "eval_2": "🟩🟩🟩🟩🏴󠁵󠁳󠁴󠁸󠁿",
+                "guess_3": "slung",
                 "eval_3": "🟩🟩🟩🟩🟩"
             }
         }
