@@ -32,5 +32,3 @@ class Bot:
 	display
 		read data and display
 '''
-=======
->>>>>>> c4f99d6fdf8c004a5dec47116dadacba2ef4d666
