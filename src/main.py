@@ -1,8 +1,9 @@
 from bot import WordleBot
 
 def main():
-	bot = WordleBot(first_guess = "slate", cur_wordle = 324)
-	bot.run()
+	bot = WordleBot(first_guess = "slate", cur_wordle = 327)
+	while True:
+		bot.run()
 
 
 if __name__ == '__main__':
@@ -14,7 +15,7 @@ Psuedo
 
 class Bot:
 
-	interacts w// Wordle website
+	interacts w/ Wordle website
 		selenium
 	stores data
 		data.json

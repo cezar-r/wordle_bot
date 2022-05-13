@@ -142,7 +142,7 @@ class ConsoleWordleBot:
 
 
 if __name__ == '__main__':
-    bot = ConsoleWordleBot("slate", verbose = True)
-    game = bot.play_game(Game("homer"))
+    bot = ConsoleWordleBot("dealt", verbose = True)
+    game = bot.play_game(Game("tipsy"))
     # print(game.guess_results_as_string())
     # print(game.get_answer())

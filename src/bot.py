@@ -8,7 +8,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
 from words import WORDBANK, PREV_ANSWERS
-from utils import find_poss_words, new_guess, guessed_word, color_dict
+from utils import find_poss_words, new_guess, guessed_word, color_dict, time_until_end_of_today
+from twitter import tweet, update_bio
 
 warnings.filterwarnings("ignore")
 options = webdriver.ChromeOptions()
@@ -27,10 +28,11 @@ class WordleBot:
     The current wordle should be set to whatever wordle the 
     previous days wordle was
     """
-    def __init__(self, filename = "data.json", first_guess = "slate", cur_wordle = 0):
+    def __init__(self, filename = "data.json", first_guess = "slate", cur_wordle = 0, tweet = False):
         self.filename = filename
         self.first_guess = first_guess
         self.cur_wordle = cur_wordle
+        self.tweet = tweet
         self.data = json.load(open(self.filename, encoding="utf-8"))
 
     def run(self):
@@ -40,34 +42,13 @@ class WordleBot:
         to complete the puzzle. Otherwise, it continuously 
         checks for a new wordle every 5 seconds
         """
-        i = 1
-        while not self._new_wordle():
-            dots_str = "." * ((i % 3) + 1)
-            print("Waiting for new wordle" + dots_str, end = "\r")
-            i += 1
-            time.sleep(5)
-
         os.system('cls' if os.name == 'nt' else 'clear')
         print("New Wordle Found!")
         self._complete_new_wordle()
-        self.run()
-
-    def _new_wordle(self):
-        """
-        This method checks if there is a new wordle or not
-        It refreshes the page and checks if there is a new
-        puzzle. If there is, it returns true.
-
-        Returns
-        -------
-        bool:   true if new wordle, otherwise false
-        """
-        driver.refresh() 
-        inner_texts = [my_elem.get_attribute("outerHTML") for my_elem in driver.execute_script("""return document.querySelector('game-app').shadowRoot.querySelector('game-row').shadowRoot.querySelectorAll('game-tile[letter]')""")]
-        if inner_texts == []:
-            self.cur_wordle += 1
-            return True
-        return False
+        self.cur_wordle += 1
+        sleep_time = time_until_end_of_today().seconds + 5
+        print("Waiting for next Wordle")
+        time.sleep(sleep_time)
 
     def _complete_new_wordle(self):
         """
@@ -94,8 +75,6 @@ class WordleBot:
                 return
             poss_words = find_poss_words(guess, guess_results, poss_words, PREV_ANSWERS)
             guess = new_guess(poss_words, poss_words, prev_guesses, PREV_ANSWERS)
-            
-
         self._write_out(prev_guesses, prev_guess_results, False)
 
     def _update_prev_answers_file(self, guess):
@@ -134,13 +113,43 @@ class WordleBot:
         json_string = json.dumps({"data" : data}, indent = 4, ensure_ascii=False)
         with open(self.filename, 'w', encoding="utf-8") as outfile:
             outfile.write(json_string)
+        self.data = json.load(open(self.filename, encoding="utf-8"))
+        if self.tweet:
+            self._tweet(prev_guess_results)
         self._display_stats()
+
+    def _tweet(self, guess_results):
+        """
+        This method tweets the bots results
+        """
+        string = f"Wordle {self.cur_wordle}\n\n"
+        for _eval in guess_results:
+            string += "".join([color_dict[evaluation] for evaluation in _eval]) + "\n"
+        tweet(string)
+        self._update_bio()
+
+    def _update_bio(self):
+        """
+        This method updates the bots Twitter bio
+        """
+        data = self.data['data']
+        games_played = data['games_played']
+        max_streak = data['max_streak']
+        total_guesses = 0 
+        games = 0
+        for game in list(data['game_history'].values()):
+            if game['won']:
+                total_guesses += len(game) // 2
+                games += 1
+        avg = round(total_guesses / games, 2)
+        string = f"I'm a bot that plays Wordle. I've played {games_played} games and average {avg} guesses per game. My longest streak is {max_streak}. Code - http://github.com/cezar-r/wordle"
+        update_bio(string)
+
 
     def _display_stats(self):
         """
         This method displays the bots data to the console
         """
-        self.data = json.load(open(self.filename, encoding="utf-8"))
         data = self.data['data']
         games_played = data['games_played']
         win_rate = data['win_rate']

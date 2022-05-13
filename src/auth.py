@@ -1,0 +1,9 @@
+API = ""
+
+API_SECRET = ""
+
+BEARER = ""
+
+ACCESS_TOKEN = ""
+
+ACCESS_TOKEN_SECRET = ""

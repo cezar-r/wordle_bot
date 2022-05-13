@@ -1,5 +1,4 @@
 import random
-
 from words import POSS_ANSWERS
 from utils import check_guess, color_dict
 

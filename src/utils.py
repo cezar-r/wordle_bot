@@ -1,9 +1,18 @@
 from words import PREV_ANSWERS, WORDBANK
+from datetime import datetime
+from datetime import timedelta
 import numpy as np
 
 color_dict = {'present' : "🟨",
                 'correct' : "🟩",
                 'absent' : "🏴󠁵󠁳󠁴󠁸󠁿"}
+
+
+def time_until_end_of_today():
+    """This method returns the number of seconds until midnight"""
+    time_delta = datetime.combine(datetime.now().date() + timedelta(days=1), datetime.strptime("0000", "%H%M").time()) - datetime.now()
+    return time_delta
+
 
 def new_guess(corpus, poss_words, prev_guesses, prev_answers = PREV_ANSWERS):
     """
